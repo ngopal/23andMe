@@ -56,11 +56,17 @@ class ParseToDict:
 			self.Data[i] = self.readInFile(i)
 		
 		self.RSids = self.getRSids()
+		#orders files by their number of RSids
 		self.FileRSidsTuple = [(i,len(self.RSids[i])) for i in self.RSids]
 		self.FileRSidsTuple = sorted(self.FileRSidsTuple, key = lambda a: -a[1])
+		# max RSid
 		self.MaxSize = self.FileRSidsTuple[0]
+		# min RSid
 		self.MinSize = self.FileRSidsTuple[-1]
-		self.Intersection = self.getIntersection(self.RSids[self.FileRSidsTuple[0][0]],self.RSids[self.FileRSidsTuple[-1][0]])
+		# find intersection between the max and min RSid rankers
+		self.Intersection = self.calcIntersectionAll()
+		# a variable that contains the files provided as input
+		self.files = [i for i in set(self.Data.keys())]
 		return None
 		
 	def readInFile(self,infile):
@@ -93,6 +99,14 @@ class ParseToDict:
 				tuple = (i, 'N/A')
 				list.append(tuple)
 		return list
+		
+	def calcIntersectionAll(self):
+		self.li = set(self.Data[self.MinSize[0]].keys())
+		for i in range(len(self.files)):
+			self.li = (set(self.li) & set(self.Data[self.files[i]].keys()))
+		return self.li
+		
+
 
 if __name__ == "__main__":
 	
