@@ -27,7 +27,7 @@ class ParseToDB:
 		cursor = DB.cursor()
 		for i in list_of_files:
 			TableName = str(i.split('.')[0])
-			cursor.execute('create table '+TableName+' (rsid INTEGER, chr TEXT, pos TEXT, geno TEXT)')
+			cursor.execute('create table '+TableName+' (rsid TEXT, chr TEXT, pos TEXT, geno TEXT)')
 		DB.close()
 		return 0
 	
@@ -57,13 +57,12 @@ class ParseToDict:
 		
 		self.RSids = self.getRSids()
 		#orders files by their number of RSids
-		self.FileRSidsTuple = [(i,len(self.RSids[i])) for i in self.RSids]
-		self.FileRSidsTuple = sorted(self.FileRSidsTuple, key = lambda a: -a[1])
+		self.FileRSidsTuple = sorted([(i,len(self.RSids[i])) for i in self.RSids], key = lambda a: -a[1])
 		# max RSid
 		self.MaxSize = self.FileRSidsTuple[0]
 		# min RSid
 		self.MinSize = self.FileRSidsTuple[-1]
-		# find intersection between the max and min RSid rankers
+		# find intersection between the input datasets
 		self.Intersection = self.calcIntersectionAll()
 		# a variable that contains the files provided as input
 		self.files = [i for i in set(self.Data.keys())]
