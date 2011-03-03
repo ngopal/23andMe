@@ -55,8 +55,9 @@ class ParseToDict:
 		for i in list_of_files:
 			self.Data[i] = self.readInFile(i)
 		
+		# a data dictionary with a list of rsids encountered in each file
 		self.RSids = self.getRSids()
-		#orders files by their number of RSids
+		# orders files by their number of RSids
 		self.FileRSidsTuple = sorted([(i,len(self.RSids[i])) for i in self.RSids], key = lambda a: -a[1])
 		# max RSid
 		self.MaxSize = self.FileRSidsTuple[0]
