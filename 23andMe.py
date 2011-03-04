@@ -28,9 +28,13 @@ import os, sys
 import sqlite3
 
 class ParseToDB:
-	
-	# Parses the 23andMe raw data file to a sqlite database
+	'''
+	This class loads the input files into a sqlite database
+	'''
 	def __init__(self,list_of_files):
+		'''
+		This function parses the 23andMe raw data file to a sqlite database
+		'''
 		dbName = 'AllData.db'
 		try:
 			self.createDB(dbName,list_of_files)
@@ -41,8 +45,10 @@ class ParseToDB:
 				self.readInFilesToDB(i,dbName)
 		return None
 		
-	# Creates a database
 	def createDB(self,name,list_of_files):
+		'''
+		This function creates a database
+		'''
 		DB = sqlite3.connect(name)
 		cursor = DB.cursor()
 		for i in list_of_files:
@@ -51,8 +57,10 @@ class ParseToDB:
 		DB.close()
 		return 0
 	
-	# Reads in the 23andMe raw data file into a dictionary
 	def readInFilesToDB(self,infile,dbName):
+		'''
+		This function reads in the 23andMe raw data file into a dictionary
+		'''
 		f = open(infile,'r')
 		DB = sqlite3.connect(dbName)
 		cursor = DB.cursor()
@@ -68,9 +76,14 @@ class ParseToDB:
 
 
 class ParseToDict:
-	
-	# Read in the raw data file into a dictionary
+	'''
+	This class reads in the raw data files into a dictionary
+	'''
 	def __init__(self,list_of_files):
+		'''
+		This function initializes the data contained in the class
+		'''
+		# the main data dictionary
 		self.Data = {}
 		for i in list_of_files:
 			self.Data[i] = self.readInFile(i)
@@ -79,9 +92,9 @@ class ParseToDict:
 		self.RSids = self.getRSids()
 		# orders files by their number of RSids
 		self.FileRSidsTuple = sorted([(i,len(self.RSids[i])) for i in self.RSids], key = lambda a: -a[1])
-		# max RSid
+		# file with the maximum number of RSids
 		self.MaxSize = self.FileRSidsTuple[0]
-		# min RSid
+		# file with the minimum number of RSids
 		self.MinSize = self.FileRSidsTuple[-1]
 		# find intersection between the input datasets
 		self.Intersection = self.calcIntersectionAll()
@@ -90,6 +103,9 @@ class ParseToDict:
 		return None
 		
 	def readInFile(self,infile):
+		'''
+		This function reads in the data from a file into a dictionary
+		'''
 		f = open(infile, 'r')
 		rsid = {}
 		for i in f.readlines():
@@ -100,16 +116,25 @@ class ParseToDict:
 		return rsid
 		
 	def getRSids(self):
+		'''
+		This function returns a dictionary identical to self.Data, but each file (key) returns a list of corresponding RSids
+		'''
 		self.Sizes = {}
 		for i in self.Data:
 			self.Sizes[i] = self.Data[i].keys()
 		return self.Sizes
 
 	def getIntersection(self,A,B):
+		'''
+		This function returns the intersection of two lists
+		'''
 		self.inter = set(A).intersection( set(B) )
 		return self.inter
 		
 	def searchSNP(self,rsid):
+		'''
+		This function looks for SNPS across the input files
+		'''
 		list = []
 		for i in self.Data:
 			try:
@@ -121,6 +146,9 @@ class ParseToDict:
 		return list
 		
 	def calcIntersectionAll(self):
+		'''
+		This function calculates the intersection between all of the input files
+		'''
 		self.li = set(self.Data[self.MinSize[0]].keys())
 		for i in range(len(self.files)):
 			self.li = (set(self.li) & set(self.Data[self.files[i]].keys()))
