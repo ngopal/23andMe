@@ -134,6 +134,8 @@ class ParseToDict:
 		self.MinSize = self.FileRSidsTuple[-1]
 		# find intersection between the input datasets
 		self.Intersection = self.calcIntersectionAll()
+		# a data dictionary which include only the snps in the intersection list
+		self.intersectionData = self.commonDict()
 		# a variable that contains the files provided as input
 		self.files = [i for i in set(self.Data.keys())]
 		return None
@@ -190,7 +192,111 @@ class ParseToDict:
 			self.li = (set(self.li) & set(self.Data[self.files[i]].keys()))
 		return self.li
 		
+	def commonDict(self):
+		'''
+		This function outputs a dictionary (identical to the Data dictionary) which only contains the snps from the intersection list
+		'''
+		self.newDict = {}
+		for i in self.Data:
+			self.rsiddict = {}
+			for k in self.Data[i]:
+				if k in self.Intersection:
+					self.rsiddict[k] = self.Data[i][k]
+				else:
+					pass
+			self.newDict[i] = self.rsiddict
+		return self.newDict
 
+	def identity(self, dict1, dict2):
+		'''
+		This function compares two dictionaries and returns a dictionary which contains only the identical elements between
+		'''
+	    return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key] == dict2[key] )
+
+	def halfIdentity(self, dict1, dict2):
+		'''
+		This function compares two dictionaries and returns a dictionary which contains only the half identical elements between
+		'''
+	    return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key][-1][0] == dict2[key][-1][0] or dict1[key][-1][0] == dict2[key][-1][1] or dict1[key][-1][1] == dict2[key][-1][0] or dict1[key][-1][1] == dict2[key][-1][1])
+
+	def phylogeny(self,rsid=None,metric='identity'):
+		'''
+		This function generates a phylogeny from the raw data files. If rsid is lookup is requested, each raw data file in the phylogeny can be coupled with its genotype
+		'''
+		def level(x):
+			'''
+			This function essentially removes the tuples and sub-lists contained in a list and returns a single flattened list
+			'''
+		    result = []
+		    for n in x:
+		        if hasattr(n, "__iter__") and not isinstance(n, basestring):
+		            result.extend(level(n))
+		        else:
+		            result.append(n)
+		    return result
+
+		def makeTree(li):
+			'''
+			This function creates a visual clustering effect on the final output list for the phylogeny function
+			'''
+			for i in range(len(li)):
+				if i == 0 or i ==1:
+					tup = [li[0],li[1]]
+				else:
+					tup = [tup,li[i]]
+			return tup
+
+
+		self.threshold = {}
+		self.people = [i for i in self.files]
+		self.combo = {}
+
+		# Prepare the ModDict dictionary by removing the SNPS that are not in common
+		self.ModDict = self.commonDict()
+
+		# Generate a list of combinations and scores
+		for i in range(len(self.people)):
+			for k in range(len(self.people)):
+				if self.people[i] == self.people[k]:
+					pass
+				else:
+					# a different metric is used if specified, otherwise identity is the default
+					if metric == 'identity':
+						self.common = self.identity(self.ModDict[self.people[i]],self.ModDict[self.people[k]])
+					elif metric == 'halfidentity':
+						self.common = self.halfIdentity(self.ModDict[self.people[i]],self.ModDict[self.people[k]])
+					else:
+						self.common = self.identity(self.ModDict[self.people[i]],self.ModDict[self.people[k]])
+					self.combo[(self.people[i], self.people[k])] = len(self.common)
+					# record the highest score to identify which two files are first clustered
+					if len(self.common) > len(self.threshold):
+						self.threshold == self.common.copy()
+						self.coords = (i,k)
+					else:
+						pass
+
+		# Create the phylogeny
+		self.phylo = []
+		self.used = []
+		for i in sorted(self.combo.items(), key=lambda x: x[1], reverse=True):
+			if len(self.phylo) == 0:
+				self.phylo.append(i[0])
+				self.used.append(i[0][0])
+				self.used.append(i[0][1])
+			else:
+				if i[0][0] in self.used:
+					pass
+				else:
+					self.phylo.append(i[0][0])
+					self.used.append(i[0][0])
+
+		self.flatphy = level(self.phylo)
+		# return the genotype tupled with the raw file if rsid provided
+		if rsid != None:
+			tree = zip(self.flatphy,[Datasets.Data[i][rsid][-1] for i in self.flatphy if isinstance(i,str)])
+			return makeTree(tree)
+		else:
+			return makeTree(self.flatphy)
 
 if __name__ == "__main__":
 	
