@@ -119,26 +119,32 @@ class ParseToDict:
 		'''
 		This function initializes the data contained in the class
 		'''
-		# the main data dictionary
+		# The main data dictionary
 		self.Data = {}
 		for i in list_of_files:
 			self.Data[i] = self.readInFile(i)
 		
-		# a data dictionary with a list of rsids encountered in each file
+		# A data dictionary with a list of rsids encountered in each file
 		self.RSids = self.getRSids()
-		# orders files by their number of RSids
+		
+		# Orders files by their number of RSids
 		self.FileRSidsTuple = sorted([(i,len(self.RSids[i])) for i in self.RSids], key = lambda a: -a[1])
-		# file with the maximum number of RSids
+		
+		# File with the maximum number of RSids
 		self.MaxSize = self.FileRSidsTuple[0]
-		# file with the minimum number of RSids
+		
+		# File with the minimum number of RSids
 		self.MinSize = self.FileRSidsTuple[-1]
-		# find intersection between the input datasets
+		
+		# Find intersection between the input datasets
 		self.Intersection = self.calcIntersectionAll()
-		# a data dictionary which include only the snps in the intersection list
+		
+		# A data dictionary which include only the snps in the intersection list
 		self.intersectionData = self.commonDict()
-		# a variable that contains the files provided as input
+		
+		# A variable that contains the files provided as input
 		self.files = [i for i in set(self.Data.keys())]
-		return None
+		
 		
 	def readInFile(self,infile):
 		'''
@@ -291,7 +297,7 @@ class ParseToDict:
 					self.used.append(i[0][0])
 
 		self.flatphy = level(self.phylo)
-		# return the genotype tupled with the raw file if rsid provided
+		# Return the genotype tupled with the raw file if rsid provided
 		if rsid != None:
 			tree = zip(self.flatphy,[Datasets.Data[i][rsid][-1] for i in self.flatphy if isinstance(i,str)])
 			return makeTree(tree)
