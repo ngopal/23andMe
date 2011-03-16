@@ -297,6 +297,7 @@ class ParseToDict:
 					self.used.append(i[0][0])
 
 		self.flatphy = level(self.phylo)
+		
 		# Return the genotype tupled with the raw file if rsid provided
 		if rsid != None:
 			tree = zip(self.flatphy,[Datasets.Data[i][rsid][-1] for i in self.flatphy if isinstance(i,str)])
