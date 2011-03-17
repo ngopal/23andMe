@@ -189,6 +189,21 @@ class ParseToDict:
 				list.append(tuple)
 		return list
 		
+	def searchChromosomes(self,chrom):
+		'''
+		This function outputs all of the data across all of the files for a specified chromosome
+		'''
+		self.biglist = []
+		for i in self.intersectionData:
+			for k in self.intersectionData[i]:
+				if str(chrom) == str(self.intersectionData[i][k][0]) and str(min) < str(self.intersectionData[i][k][1]) and str(max) > str(self.intersectionData[i][k][1]):
+					li = []
+					for j in self.intersectionData:
+						tup = (j,self.intersectionData[i][k])
+						li.append(tup)
+					self.biglist.append(li)
+		return self.biglist
+		
 	def calcIntersectionAll(self):
 		'''
 		This function calculates the intersection between all of the input files
