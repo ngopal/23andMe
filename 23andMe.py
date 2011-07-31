@@ -110,6 +110,29 @@ class ParseToJSON:
 		out = JSONEncoder().encode(data)
 		return out
 
+class ConvertToBED:
+	'''
+	This function converts a 23andMe file into a BED file (for use with bedtools)
+	I've found that 23andMe data is in hg18 (NCBI36) format
+	'''
+	def __init__(self,file,out):
+		'''
+		The default function calls the actual function that does the conversion
+		'''
+		self.convert(file,out)
+	
+	def convert(self,infile,outfile):
+		'''
+		This is the function that does to 23andMe to BED conversion
+		'''
+		out = open(outfile+".bed", 'w')
+		for i in open(infile, 'r'):
+			if "#" not in i:
+				line = infile.strip('\n').split('\t')
+				out.write(line[0]+'\t'+str(int(line[1])-1)+'\t'+line[1]+'\t'+line[2]+'\t+\n')
+		out.close()
+		return "Complete"
+				
 
 class ParseToDict:
 	'''
