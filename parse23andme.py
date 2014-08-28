@@ -25,7 +25,7 @@
 ###################################################################################
 
 import os, sys
-import sqlite3
+#import sqlite3
 import json
 from json import JSONEncoder
 
@@ -135,14 +135,15 @@ class ConvertToBED:
 				
 
 class ParseToDict:
-	'''
+        '''
 	This class reads in the raw data files into a dictionary
 	'''
-	def __init__(self,list_of_files):
+        def __init__(self,list_of_files):
 		'''
-		This function initializes the data contained in the class
+                This function initializes the data contained in the class
 		'''
 		# The main data dictionary
+                self.files = list_of_files 
 		self.Data = {}
 		for i in list_of_files:
 			self.Data[i] = self.readInFile(i)
@@ -164,9 +165,7 @@ class ParseToDict:
 		
 		# A data dictionary which include only the snps in the intersection list
 		self.intersectionData = self.commonDict()
-		
-		# A variable that contains the files provided as input
-		self.files = [i for i in set(self.Data.keys())]
+                # A variable that contains the files provided as input
 		
 		
 	def readInFile(self,infile):
@@ -255,29 +254,29 @@ class ParseToDict:
 		'''
 		This function compares two dictionaries and returns a dictionary which contains only the identical elements between
 		'''
-	    return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key] == dict2[key] )
+                return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key] == dict2[key] )
 
 	def halfIdentity(self, dict1, dict2):
 		'''
 		This function compares two dictionaries and returns a dictionary which contains only the half identical elements between
 		'''
-	    return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key][-1][0] == dict2[key][-1][0] or dict1[key][-1][0] == dict2[key][-1][1] or dict1[key][-1][1] == dict2[key][-1][0] or dict1[key][-1][1] == dict2[key][-1][1])
+                return dict( (key, dict1[key]) for key in (set(dict1) & set(dict2)) if dict1[key][-1][0] == dict2[key][-1][0] or dict1[key][-1][0] == dict2[key][-1][1] or dict1[key][-1][1] == dict2[key][-1][0] or dict1[key][-1][1] == dict2[key][-1][1])
 
 	def phylogeny(self,rsid=None,metric='identity'):
 		'''
 		This function generates a phylogeny from the raw data files. If rsid is lookup is requested, each raw data file in the phylogeny can be coupled with its genotype
 		'''
 		def level(x):
-			'''
+                        '''
 			This function essentially removes the tuples and sub-lists contained in a list and returns a single flattened list
 			'''
-		    result = []
-		    for n in x:
-		        if hasattr(n, "__iter__") and not isinstance(n, basestring):
-		            result.extend(level(n))
-		        else:
-		            result.append(n)
-		    return result
+                        result = []
+                        for n in x:
+                                if hasattr(n, "__iter__") and not isinstance(n, basestring):
+                                        result.extend(level(n))
+                                else:
+                                        result.append(n)
+                        return result
 
 		def makeTree(li):
 			'''
@@ -313,7 +312,8 @@ class ParseToDict:
 						self.common = self.identity(self.ModDict[self.people[i]],self.ModDict[self.people[k]])
 					self.combo[(self.people[i], self.people[k])] = len(self.common)
 					# record the highest score to identify which two files are first clustered
-					if len(self.common) > len(self.threshold):
+                                        					
+                                        if len(self.common) > len(self.threshold):
 						self.threshold == self.common.copy()
 						self.coords = (i,k)
 					else:
@@ -335,7 +335,6 @@ class ParseToDict:
 					self.used.append(i[0][0])
 
 		self.flatphy = level(self.phylo)
-		
 		# Return the genotype tupled with the raw file if rsid provided
 		if rsid != None:
 			tree = zip(self.flatphy,[Datasets.Data[i][rsid][-1] for i in self.flatphy if isinstance(i,str)])
