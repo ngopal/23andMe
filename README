@@ -1,5 +1,9 @@
+Hello,
+
+I built this little library circa 2009 and I am no longer maintaining it. I believe most (if not all) of this library is now part of BioPython. Although I'm not removing the links below, please consider them outdated and using BioPython instead:
+
 a walkthrough of how to use this module is available at http://blog.nikhilgopal.com
 
-Part 1: http://www.nikhilgopal.com/2011/02/how-to-mine-23andme-raw-data-with.html
-Part 2: http://www.nikhilgopal.com/2011/03/how-to-mine-23andme-raw-data-with.html
-Part 3: http://www.nikhilgopal.com/2011/05/how-to-mine-23andme-data-part-3.html
+Part 1: http://nikhilgopal.com/23andme/bioinformatics/2011/02/09/how-to-mine-23andme-raw-data-with-python-part-1.html
+Part 2: http://nikhilgopal.com/23andme/bioinformatics/2011/03/16/how-to-mine-23andme-raw-data-with-python-part-2.html
+Part 3: http://nikhilgopal.com/23andme/bioinformatics/2011/05/21/how-to-mine-23andme-data-part-3.html
